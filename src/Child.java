@@ -20,26 +20,27 @@ public class Child {
         countVowels();
     }
 
-    void countVowels(){
-        List<String> aux = new ArrayList<>();
-        for (int num : Utils.countVowels(fileLines)) {
-            aux.add(Integer.toString(num));
-        }
-
-        String path = "vocales/vocales-" + Utils.getFileNum(f);
-        Utils.saveFile(path, aux);
-    }
-
     void toLowerCase() {
         List<String> aux = new ArrayList<>();
         for (String fileLine : fileLines) {
             aux.add(fileLine.toLowerCase());
         }
-        String path = "minusculas/minusculas-" + Utils.getFileNum(f);
-        Utils.saveFile(path, aux);
+        Utils.saveFile("minusculas", Utils.getFileNum(f), aux);
     }
 
-
+    void countVowels() {
+        String[] aux = new String[fileLines.length];
+        for (int i = 0; i < fileLines.length; i++) {
+            int count = 0;
+            for (char c : fileLines[i].toCharArray()) {
+                if ("aeiouAEIOUáéíóúÜü".indexOf(c) != -1) {
+                    count++;
+                }
+            }
+            aux[i] = count + "";
+        }
+        Utils.saveFile("vocales", Utils.getFileNum(f), aux);
+    }
 
 
 }
