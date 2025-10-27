@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -14,7 +16,7 @@ public class Parent
     int wordsTotal = 0;
 
 
-    static void main(String[] args) {
+    static void main() {
         Parent p = new Parent();
         p.loadFiles();
         p.processFiles();
@@ -30,9 +32,7 @@ public class Parent
             System.err.println("No files loaded from directory: " + dir);
             return;
         }
-        for (File file : listOfFiles) {
-            if (file.isFile()) files.add(file);
-        }
+        Collections.addAll(files, listOfFiles);
     }
 
     void processFiles()
@@ -43,12 +43,11 @@ public class Parent
         for (File file : files) {
             resultSummary.add(Utils.countWordsInFile(file));
             ProcessBuilder pb = new ProcessBuilder("java", "-cp", cp, "Child", file.getPath());
-            pb.directory(new File("."));
             pb.inheritIO();
 
             try {
                 childProcess[i++] = pb.start();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -119,6 +118,7 @@ public class Parent
             File[] resultFiles = getFilesInFolder(folder);
             for (File f : resultFiles) {
                 String[] lines = Utils.loadFile(f);
+                assert lines != null;
                 for (String line : lines) {
                     wordsTotal += line.split("\\s+").length;
                 }
@@ -132,6 +132,7 @@ public class Parent
             File[] resultFiles = getFilesInFolder(folder);
             for (File f : resultFiles) {
                 String[] lines = Utils.loadFile(f);
+                assert lines != null;
                 for (String line : lines) {
                     vowelTotal += Integer.parseInt(line);
                 }

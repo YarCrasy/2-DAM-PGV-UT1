@@ -51,6 +51,7 @@ public class Utils {
     static String countWordsInFile(File file) {
         String[] fileLines = loadFile(file);
         wordCount = voidLines = 0;
+        assert fileLines != null;
         for (String line : fileLines) {
             if (line.trim().isEmpty()) {
                 voidLines++;
