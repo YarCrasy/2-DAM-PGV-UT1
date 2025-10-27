@@ -1,8 +1,4 @@
-import jdk.jshell.execution.Util;
-
 import java.io.File;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,7 +7,6 @@ public class Parent
     final static String dir = "./datos/";
     public List<File> files = new ArrayList<>();
     Process[] childProcess;
-
     final List <String> resultSummary = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -19,9 +14,6 @@ public class Parent
         p.loadFiles();
         p.processFiles();
         int totalVowels = 0;
-        for (File file : p.files) {
-            p.resultSummary.add(Utils.countWordsInFile(file));
-        }
         p.waitProcesses();
         p.readResults();
     }
@@ -47,6 +39,7 @@ public class Parent
         String cp = System.getProperty("java.class.path");
         int i = 0;
         for (File file : files) {
+            resultSummary.add(Utils.countWordsInFile(file));
             ProcessBuilder pb = new ProcessBuilder("java", "-cp", cp, "Child", file.getPath());
             pb.directory(new File("."));
             pb.inheritIO();
@@ -68,10 +61,6 @@ public class Parent
                 throw new RuntimeException(e);
             }
         }
-//        CompletableFuture<?>[] futures = Arrays.stream(childProcess)
-//                .map(Process::onExit)
-//                .toArray(CompletableFuture[]::new);
-//        CompletableFuture.allOf(futures).join();
     }
 
     void readResults()
@@ -81,22 +70,35 @@ public class Parent
             System.err.println("No result folders found.");
             return;
         }
-        Thread[] threads = new Thread[resultFolders.length];
-        int i = 0;
-        for (File folder : resultFolders) {
-            File[] files = getFilesInFolder(folder);
-            threads[i] = new Thread(()-> {
-                for (File file : files) {
-                    String[] fileLines = Utils.loadFile(file);
 
-                    synchronized (resultSummary) {
-                        assert fileLines != null;
-                        resultSummary.addAll(Arrays.stream(fileLines).toList());
+        int vowelTotal = 0;
+        int wordsTotal = 0;
+
+        for (File folder : resultFolders) {
+            String path = folder.getPath();
+            if (path.equals("./resultados/minusculas")) {
+                File[] resultFiles = getFilesInFolder(folder);
+                for (File f : resultFiles) {
+                    String[] lines = Utils.loadFile(f);
+                    for (String line : lines) {
+                        wordsTotal += line.split("\\s+").length;
                     }
                 }
-            });
-            i++;
+                resultSummary.add("Total de palabras: " + wordsTotal);
+            }
+            else if (path.equals("./resultados/vocales")) {
+                File[] resultFiles = getFilesInFolder(folder);
+                for (File f : resultFiles) {
+                    String[] lines = Utils.loadFile(f);
+                    for (String line : lines) {
+                        vowelTotal += Integer.parseInt(line);
+                    }
+                }
+                resultSummary.add("Total de vocales: " + vowelTotal);
+            }
         }
+        float aux = (wordsTotal == 0) ? 0 : (float)vowelTotal / wordsTotal;
+        resultSummary.add("Promedio de vocales por palabra: " + aux);
 
         Utils.saveFile("parent", resultSummary);
     }

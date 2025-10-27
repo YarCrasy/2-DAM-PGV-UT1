@@ -50,22 +50,6 @@ public class Utils {
         }
     }
 
-    static int[] countVowels(String[] fileLines) {
-        int[] aux = new int[fileLines.length];
-        int i = 0;
-        for (String fileLine : fileLines) {
-            int count = 0;
-            for (char c : fileLine.toCharArray()) {
-                //solo se contemplan vocales del alfabeto español
-                if ("aeiouáéíóúü".indexOf(c) != -1) {
-                    count++;
-                }
-            }
-            aux[i++] = count;
-        }
-        return aux;
-    }
-
     static String countWordsInFile(File file) {
         String[] fileLines = loadFile(file);
         wordCount = voidLines = 0;
@@ -77,7 +61,7 @@ public class Utils {
             String[] words = line.trim().split("\\s+");
             wordCount += words.length;
         }
-        return("Found: " + wordCount + " words/" + voidLines + " void lines in file: " + file.getName());
+        return("Processing file: " + file.getName() + "\n" + wordCount + " words\n" + voidLines + " void lines\n");
     }
 
 }

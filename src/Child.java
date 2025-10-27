@@ -9,15 +9,16 @@ public class Child {
     private File f;
     String[] fileLines;
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
+        Child c = new Child();
         if (args.length == 0) {
-            System.err.println(this.getClass().getSimpleName() + ": No arguments provided");
+            System.err.println(c.getClass().getSimpleName() + ": No arguments provided");
             return;
         }
-        f = new File(args[0]);
-        fileLines = Utils.loadFile(f);
-        toLowerCase();
-        countVowels();
+        c.f = new File(args[0]);
+        c.fileLines = Utils.loadFile(c.f);
+        c.toLowerCase();
+        c.countVowels();
     }
 
     void toLowerCase() {
@@ -25,11 +26,11 @@ public class Child {
         for (String fileLine : fileLines) {
             aux.add(fileLine.toLowerCase());
         }
-        Utils.saveFile("minusculas", Utils.getFileNum(f), aux);
+        Utils.saveFile("minusculas/minusculas-"+Utils.getFileNum(f), aux);
     }
 
     void countVowels() {
-        String[] aux = new String[fileLines.length];
+        List<String> aux = new ArrayList<>();
         for (int i = 0; i < fileLines.length; i++) {
             int count = 0;
             for (char c : fileLines[i].toCharArray()) {
@@ -37,9 +38,9 @@ public class Child {
                     count++;
                 }
             }
-            aux[i] = count + "";
+            aux.add(count + "");
         }
-        Utils.saveFile("vocales", Utils.getFileNum(f), aux);
+        Utils.saveFile("vocales/vocales-"+Utils.getFileNum(f), aux);
     }
 
 
