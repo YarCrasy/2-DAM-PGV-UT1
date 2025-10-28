@@ -1,1 +1,66 @@
 
+@startuml
+title Class diagram for 2-DAM-PGV-UT1
+skinparam classAttributeIconSize 0
+
+class Utils <<utility>> {
+  +savePath : String {static}
+  +wordCount : int {static}
+  +voidLines : int {static}
+
+  +loadFile(file : File) : String[] {static}
+  +getFileNum(f : File) : int {static}
+  +saveFile(fileName : String, lines : List<String>) : void {static}
+  +countWordsInFile(file : File) : String {static}
+}
+
+class Child {
+  -f : File
+  -fileLines : String[]
+
+  +main(args : String[]) : void {static}
+  -toLowerCase() : void
+  -countVowels() : void
+}
+
+class Parent {
+  +dir : String {static final}
+  +files : List<File>
+  +childProcess : Process[]
+  +resultSummary : List<String>
+
+  +vowelTotal : int
+  +wordsTotal : int
+
+  +main() : void {static}
+  +loadFiles() : void
+  +processFiles() : void
+  +waitProcesses() : void
+  +processResults() : void
+  +startCountingThreads(threads : Stack<Thread>) : void
+  +waitCountingThreads(threads : Stack<Thread>) : void
+  +getResultFolders() : File[]
+  +countTotalWords(folder : File) : Runnable
+  +countTotalVowels(folder : File) : Runnable
+  +getFilesInFolder(folder : File) : File[]
+}
+
+' External classes used in the project
+class File
+class Process
+class Thread
+class Stack
+
+' Associations
+Parent "1" -- "0..*" File : files
+Parent "1" *-- "*" Process : childProcess
+Parent ..> Child : starts process / launches
+Parent ..> Utils : uses
+Child ..> Utils : uses
+
+note right of Utils
+  Utils is a static utility class
+  (load/save and helpers)
+end note
+
+@enduml
